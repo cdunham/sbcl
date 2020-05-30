@@ -94,6 +94,35 @@ os_restore_fp_control(os_context_t *context)
 {
 }
 
+#elif defined(LISP_FEATURE_FREEBSD)
+
+os_context_register_t   *
+os_context_register_addr(os_context_t *context, int regno)
+{
+    switch (regno) {
+        case reg_LR:    return (&context->uc_mcontext.mc_gpregs.gp_lr);
+        case reg_NSP:   return (&context->uc_mcontext.mc_gpregs.gp_sp);
+        default:        return (&context->uc_mcontext.mc_gpregs.gp_x[regno]);
+    }
+}
+
+os_context_register_t *
+os_context_pc_addr(os_context_t *context)
+{
+    return (&context->uc_mcontext.mc_gpregs.gp_elr);
+}
+
+os_context_register_t   *
+os_context_float_register_addr(os_context_t *context, int offset)
+{
+    return NULL;
+}
+
+void
+os_restore_fp_control(os_context_t *context)
+{
+}
+
 #endif
 
 os_context_register_t *
